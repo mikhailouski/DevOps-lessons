@@ -1,0 +1,8 @@
+3,9G	/media/yuri/Ubuntu 24.04.1 LTS amd64/casper
+3,8G	/
+1,1G	/var/lib/snapd/snaps
+784M	/usr/lib/x86_64-linux-gnu
+680M	/var/cache/apt/archives
+553M	/snap/gnome-42-2204/176/usr/lib/x86_64-linux-gnu
+458M	/media/yuri/Ubuntu 24.04.1 LTS amd64/pool/main/l/linux-firmware
+385M	/media/yuri/Ubuntu 24.04.1 LTS amd64/pool/restricted/n/nvidia-graphics-drivers-535

@@ -1,0 +1,25 @@
+yuri@yuri-VM:~$ sudo useradd -m -G sudo -s /bin/bash user
+[sudo] пароль для yuri: 
+yuri@yuri-VM:~$ cat /etc/passwd | tail -n 1
+user:x:1002:1002::/home/user:/bin/bash
+yuri@yuri-VM:~$ passwd user
+passwd: вы не можете посмотреть или изменить пароль user.
+yuri@yuri-VM:~$ sudo !!
+sudo passwd user
+Новый пароль: 
+НЕУДАЧНЫЙ ПАРОЛЬ: Пароль содержит имя пользователя в той или иной форме
+Повторите ввод нового пароля: 
+Извините, но пароли не совпадают.
+Новый пароль: 
+НЕУДАЧНЫЙ ПАРОЛЬ: Пароль не прошел проверку орфографии - основан на слове из словаря
+Повторите ввод нового пароля: 
+passwd: пароль успешно обновлён
+yuri@yuri-VM:~$ su user
+Пароль: 
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+user@yuri-VM:/home/yuri$ sudo ls /root
+[sudo] пароль для user: 
+snap
+user@yuri-VM:/home/yuri$
