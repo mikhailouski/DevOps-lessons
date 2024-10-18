@@ -1,0 +1,10 @@
+[Unit]
+Description=Service for monitoring CPU usage and free memory
+
+[Service]
+user=yuri
+ExecStart=/home/yuri/DevOps-lessons/lesson2/scripts/monitoring.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
