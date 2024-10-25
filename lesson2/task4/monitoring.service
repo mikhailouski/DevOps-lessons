@@ -3,7 +3,7 @@ Description=Service for monitoring CPU usage and free memory
 
 [Service]
 user=yuri
-ExecStart=/home/yuri/DevOps-lessons/lesson2/scripts/monitoring.sh
+ExecStart=/home/yuri/DevOps-lessons/lesson2/task4/monitoring.sh
 Restart=always
 
 [Install]
