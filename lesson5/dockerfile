@@ -1,0 +1,7 @@
+FROM python:3.10.15-slim-bookworm
+
+RUN pip install --upgrade pip
+
+COPY server.py .
+
+CMD ["python", "server.py"]
