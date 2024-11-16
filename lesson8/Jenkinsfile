@@ -10,13 +10,17 @@ pipeline {
     stages {
         stage('Check System Resources') {
             steps {
-                script {                    
-                    def freeMemory = sh(script: "free -m | awk 'NR==2 {print \$4}'", returnStdout: true).trim()
-                    freeMemory = freeMemory.toInteger()                    
-                    if (freeMemory < 4096) {
-                        currentBuild.description = "Недостаточно памяти. Будет развёрнут только Elasticsearch."
+                script {
+                    def freeRAM = sh(script: "free -m | awk 'NR==2 {print \$4}'", returnStdout: true).trim()
+                    freeRAM = freeRAM.toInteger()
+
+                    def freeDisk = sh(script: "df / -h | awk 'NR==2 {print \$4}' | sed 's/G//'", returnStdout: true).trim()
+                    freeDisk = freeDisk.toInteger()
+
+                    if (freeRAM < 4096 || freeDisk < 4) {
+                        currentBuild.description = "Недостаточно ресурсов. Будет развёрнут только Elasticsearch."
                     } else {
-                        currentBuild.description = "Памяти достаточно. Будет развёрнут ELK stack."
+                        currentBuild.description = "Ресурсов достаточно. Будет развёрнут ELK stack."
                     }
                 }
             }
@@ -31,6 +35,7 @@ pipeline {
             steps {
                 script {
                     echo "Разворачиваем Elasticsearch..."
+                    sh "docker rm -f elasticsearch || true"
                     sh "docker run -d --name elasticsearch -e discovery.type=single-node -p 9200:9200 ${ELASTICSEARCH_DOCKER_IMAGE}"
                 }
             }
@@ -44,10 +49,15 @@ pipeline {
             }
             steps {
                 script {
-                    echo "Разворачиваем полный ELK stack (Elasticsearch, Logstash, Kibana)..."                    
-                    sh "docker run -d --name elasticsearch -e discovery.type=single-node -p 9200:9200 ${ELASTICSEARCH_DOCKER_IMAGE}"                    
-                    sh "docker run -d --name logstash -p 5044:5044 ${env.LOGSTASH_DOCKER_IMAGE}"
-                    sh "docker run -d --name kibana -p 5601:5601 --link elasticsearch:elasticsearch ${KIBANA_DOCKER_IMAGE}"
+                    echo "Разворачиваем полный ELK stack (Elasticsearch, Logstash, Kibana)..."
+                    sh "docker network create elk-network || true"  // Создаем сеть, если её нет
+                    sh "docker rm -f elasticsearch || true"
+                    sh "docker rm -f logstash || true"
+                    sh "docker rm -f kibana || true"
+
+                    sh "docker run -d --name elasticsearch --network elk-network -e discovery.type=single-node -p 9200:9200 ${ELASTICSEARCH_DOCKER_IMAGE}"
+                    sh "docker run -d --name logstash --network elk-network -p 5044:5044 ${LOGSTASH_DOCKER_IMAGE}"
+                    sh "docker run -d --name kibana --network elk-network -p 5601:5601 ${KIBANA_DOCKER_IMAGE}"
                 }
             }
         }
