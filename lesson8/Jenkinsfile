@@ -14,10 +14,11 @@ pipeline {
                     def freeRAM = sh(script: "free -m | awk 'NR==2 {print \$4}'", returnStdout: true).trim()
                     freeRAM = freeRAM.toInteger()
 
-                    def freeDisk = sh(script: "df / -h | awk 'NR==2 {print \$4}' | sed 's/G//'", returnStdout: true).trim()
+                    def freeDisk = sh(script: "df / | awk 'NR==2 {print \$4}'", returnStdout: true).trim()
                     freeDisk = freeDisk.toInteger()
+                    freeDisk = freeDisk / 1024
 
-                    if (freeRAM < 4096 || freeDisk < 4) {
+                    if (freeRAM < 4096 && freeDisk < 4096) {
                         currentBuild.description = "Недостаточно ресурсов. Будет развёрнут только Elasticsearch."
                     } else {
                         currentBuild.description = "Ресурсов достаточно. Будет развёрнут ELK stack."
